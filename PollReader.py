@@ -54,19 +54,24 @@ class PollReader():
         and each value in a CSV is seperated by a comma.
         """
 
-        # iterate through each row of the data
-        for i in self.raw_data:
+        # iterate through each row of the data, skipping the header row [FIXED]
+        for row in self.raw_data[1:]:
 
-            # split up the row by column
-            seperated = i.split(' ')
+            # split up the row by column, using a comma as the separator [FIXED]
+            separated = row.strip().split(',')
 
-            # map each part of the row to the correct column
-            self.data_dict['month'].append(seperated[0])
-            self.data_dict['date'].append(int(seperated[1]))
-            self.data_dict['sample'].append(int(seperated[2]))
-            self.data_dict['sample type'].append(seperated[2])
-            self.data_dict['Harris result'].append(float(seperated[3]))
-            self.data_dict['Trump result'].append(float(seperated[4]))
+            # The 'sample' column contains size and type, so we need to split it
+            sample_info = separated[2].split(' ')
+            sample_size = int(sample_info[0])
+            sample_type = sample_info[1]
+
+            # map each part of the row to the correct column [FIXED]
+            self.data_dict['month'].append(separated[0])
+            self.data_dict['date'].append(int(separated[1]))
+            self.data_dict['sample'].append(sample_size)
+            self.data_dict['sample type'].append(sample_type)
+            self.data_dict['Harris result'].append(float(separated[3]))
+            self.data_dict['Trump result'].append(float(separated[4]))
 
 
     def highest_polling_candidate(self):
